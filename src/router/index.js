@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 import Home from '@/pages/Home'
-import IdeaPanel from '@/components/IdeaPanel'
+import Advice from '@/pages/Advice'
 
 Vue.use(Router)
 
@@ -21,7 +21,7 @@ export default new Router({
     {
       path: '/technique',
       name: 'Technique',
-      component: IdeaPanel
+      component: Advice
     }
   ]
 })
