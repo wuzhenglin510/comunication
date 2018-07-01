@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 import Home from '@/pages/Home'
 import Advice from '@/pages/Advice'
+import CreateArticle from '@/pages/CreateArticle'
 
 Vue.use(Router)
 
@@ -22,6 +23,11 @@ export default new Router({
       path: '/technique',
       name: 'Technique',
       component: Advice
+    },
+    {
+      path: '/createArticle',
+      name: 'CreateArticle',
+      component: CreateArticle
     }
   ]
 })

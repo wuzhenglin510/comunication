@@ -3,7 +3,9 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import VueLocalStorage from 'vue-localstorage'
 
+Vue.use(VueLocalStorage)
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

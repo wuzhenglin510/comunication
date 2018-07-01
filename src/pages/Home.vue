@@ -1,6 +1,20 @@
 <template>
     <div class="wrapper">
-
+    <button class="login-bt" v-if="!hasToken" v-on:click="showLogin()">登陆</button>
+    <button class="login-bt" v-if="!hasToken" v-on:click="showLogin()">注册</button>
+    <button class="login-bt" v-if="hasToken">登出</button>
+    <div v-show="shouldShowLogin" class="login-box">
+      <input class="input-text"  type="text" placeholder="账号"/>
+      <input class="input-text"  type="password" placeholder="密码"/>
+      <button class="login-bt-2">注册</button>
+      <div class="no-login" v-on:click="closeLogin()">暂不登陆~</div>
+    </div>
+    <div v-show="shouldShowRegister" class="login-box">
+      <input class="input-text"  type="text" placeholder="账号"/>
+      <input class="input-text"  type="password" placeholder="密码"/>
+      <button class="login-bt-2">注册</button>
+      <div class="no-login" v-on:click="closeLogin()">暂不注册~</div>
+    </div>
 	<div class="container" id="c0">
 		<div class="image" id="i0">
 			<div class="city">
@@ -140,7 +154,100 @@
 </div>
 </template>
 
+<script>
+export default {
+  name: 'Home',
+  data () {
+    return {
+      shouldShowLogin: false,
+      shouldShowRegister: false
+    }
+  },
+  computed: {
+    hasToken: function () {
+      return (this.$localStorage.get('token') != null)
+    }
+  },
+  methods: {
+    closeLogin: function () {
+      this.shouldShowLogin = false
+    },
+    showLogin: function () {
+      this.shouldShowLogin = true
+    }
+  }
+}
+</script>
+
 <style scoped>
+
+.no-login {
+  position: fixed;
+  right: 0px;
+  top: 160px;
+  border: 1px dotted;
+  border-radius: 100px;
+  color: #7b88d1;
+}
+
+.no-login:hover {
+  color: #FF9999;
+}
+
+.no-login:active {
+  color: #FF99CC
+}
+
+.login-box {
+  z-index: 9999;
+  background-color: #66CCFF;
+  position: fixed;
+  top: 0%;
+  left: 0px;
+  width: 100%;
+  padding: 10px;
+  height: 170px;
+  border-radius: 20px;
+  border: 2px solid;
+}
+
+.input-text {
+  display: block;
+  margin: 10px auto 20px auto;
+  padding: 0 30px;
+  color: inherit;
+  width: 80%;
+  height: 37px;
+  font-family: inherit;
+  font-size: var(--inputFontSize);
+  font-weight: inherit;
+  line-height: var(--inputLineHeight);
+  border: none;
+  border-radius: 0.4rem;
+  transition: box-shadow var(--transitionDuration);
+}
+
+.login-bt-2 {
+  width: 73px;
+  height: 73px;
+  border-radius: 100px;
+  color: #555;
+  outline:none;
+  border: 2px solid;
+}
+
+.login-bt-2:active {
+  border: 4px solid;
+}
+
+.login-bt {
+    width: 30%;
+    height: 7%;
+    border-radius: 100px;
+    color: #555;
+    outline:none;
+}
+
 .wrapper {
   position: absolute;
   top: 10%;
