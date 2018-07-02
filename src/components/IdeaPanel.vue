@@ -41,7 +41,7 @@ export default {
   name: 'IdeaPanel',
   props: {
     ideas: {
-      type: Object
+      type: Array
     }
   },
   methods: {

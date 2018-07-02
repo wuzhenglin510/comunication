@@ -5,11 +5,12 @@
             <label id='trigger' for='menu-toggle'></label>
             <label id='burger' for='menu-toggle'></label>
             <ul id='menu'>
-                <li><a href='#'>首页</a></li>
-                <li><a href='#'>前端</a></li>
-                <li><a href='#'>后端</a></li>
-                <li><a href='#'>产品</a></li>
-                <li><a href='#'>设计</a></li>
+                <li v-on:click="go('Home')"><a href='#'>首页</a></li>
+                <li v-on:click="go('Technique', {classify:'前端'})"><a>前端</a></li>
+                <li v-on:click="go('Technique', {classify:'后端'})"><a>后端</a></li>
+                <li v-on:click="go('Technique', {classify:'产品'})"><a>产品</a></li>
+                <li v-on:click="go('Technique', {classify:'设计'})"><a>设计</a></li>
+                <li v-on:click="go('PostArticle')"><a>我要发</a></li>
             </ul>
         </div>
         <idea-panel :ideas='ideas'></idea-panel>
@@ -44,6 +45,11 @@ export default {
           createTime: 1530326839679
         }
       ]
+    }
+  },
+  methods: {
+    go: function (name, params) {
+      this.$router.push({name: name, params: params})
     }
   }
 }

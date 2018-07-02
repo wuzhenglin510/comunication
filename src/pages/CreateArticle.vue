@@ -5,28 +5,53 @@
             <div class='vertical-align'>
                 <div class='btns'>
                     <label>
-                        <input v-model="article.group" name='button-group' type='radio' value='前端'>
+                        <input v-model="article.classify" name='button-group' type='radio' value='前端'>
                         <span class='btn first'>前端</span>
                     </label>
                     <label>
-                        <input v-model="article.group" name='button-group' type='radio' value='后端'>
+                        <input v-model="article.classify" name='button-group' type='radio' value='后端'>
                         <span class='btn'>后端</span>
                     </label>
                     <label>
-                        <input v-model="article.group" name='button-group' type='radio' value='' disabled=true>
+                        <input v-model="article.classify" name='button-group' type='radio' value='' disabled=true>
                         <span class='btn' disabled=true>选择类别</span>
                     </label>
                     <label>
-                        <input v-model="article.group" name='button-group' type='radio' value='产品'>
+                        <input v-model="article.classify" name='button-group' type='radio' value='产品'>
                         <span class='btn'>产品</span>
                     </label>
                     <label>
-                        <input v-model="article.group" name='button-group' type='radio' value='设计'>
+                        <input v-model="article.classify" name='button-group' type='radio' value='设计'>
                         <span class='btn last'>设计</span>
                     </label>
-                    </div>
                 </div>
+            </div>
+            <div class='vertical-align2'>
+                <div class='btns'>
+                    <label>
+                        <input v-model="article.purpose" name='button-group2' type='radio' value='推荐'>
+                        <span class='btn first'>推荐</span>
+                    </label>
+                    <label>
+                        <input v-model="article.purpose" name='button-group2' type='radio' value='想法'>
+                        <span class='btn'>想法</span>
+                    </label>
+                    <label>
+                        <input v-model="article.purpose" name='button-group2' type='radio' value='' disabled=true>
+                        <span class='btn' disabled=true>选择目的</span>
+                    </label>
+                    <label>
+                        <input v-model="article.purpose" name='button-group2' type='radio' value='产品'>
+                        <span class='btn'>分享</span>
+                    </label>
+                    <label>
+                        <input v-model="article.purpose" name='button-group2' type='radio' value='设计'>
+                        <span class='btn last'>吐槽</span>
+                    </label>
+                </div>
+            </div>
             <input type='text' v-model="article.title"  class="input-text" placeholder="做个有内涵的标题党"/>
+            <input type='text' v-model="article.abstract"  class="input-text" placeholder="摘要"/>
         </div>
         <mavon-editor class="mk-container" :ishljs = "true" v-model='article.content' :toolbars='markdownConfig'/>
         <button class="post-bt" v-on:click="post()">发布</button>
@@ -36,14 +61,18 @@
 <script>
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
+import { doPostArticle } from '../api'
 export default {
   name: 'CreateArticle',
   components: {
     mavonEditor
   },
   methods: {
-    post () {
-      console.log(this.article)
+    go: function (name) {
+      this.$router.push({name: name})
+    },
+    post: async function () {
+      await doPostArticle(this.article, this.$localStorage.get('token'))
     }
   },
   data () {
@@ -51,7 +80,9 @@ export default {
       article: {
         content: '',
         title: '',
-        group: ''
+        classify: '',
+        purpose: '',
+        abstract: ''
       },
       markdownConfig: {
         bold: true, // 粗体
@@ -169,9 +200,18 @@ body {
   display: table-cell;
   vertical-align: middle;
   display: block;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: -40px;
+  left: 10%;
+  position: fixed;
+  margin-top: -50px;
+}
+
+.vertical-align2 {
+  display: table-cell;
+  vertical-align: middle;
+  display: block;
+  right: 10%;
+  position: fixed;
+  margin-top: -50px;
 }
 
 .button-link {
@@ -188,7 +228,7 @@ body {
     #0ef49b 100%
   );
   z-index: 0;
-  height: 45px;
+  height: 30px;
   float: none;
   margin: 0 auto;
   width: 600px;
@@ -277,4 +317,5 @@ body {
     margin 500ms,
     -webkit-transform 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275) 250ms;
 }
+
 </style>

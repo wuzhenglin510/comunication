@@ -25,8 +25,8 @@ export default new Router({
       component: Advice
     },
     {
-      path: '/createArticle',
-      name: 'CreateArticle',
+      path: '/postArticle',
+      name: 'PostArticle',
       component: CreateArticle
     }
   ]

@@ -1,20 +1,23 @@
 <template>
     <div class="wrapper">
     <button class="login-bt" v-if="!hasToken" v-on:click="showLogin()">登陆</button>
-    <button class="login-bt" v-if="!hasToken" v-on:click="showLogin()">注册</button>
-    <button class="login-bt" v-if="hasToken">登出</button>
+    <button class="login-bt" v-if="!hasToken" v-on:click="showRegister()">注册</button>
+    <button class="login-bt" v-if="hasToken">{{this.$localStorage.get('nickname')}}</button>
+    <button class="login-bt" v-if="hasToken"  v-on:click="logout()">登出</button>
     <div v-show="shouldShowLogin" class="login-box">
-      <input class="input-text"  type="text" placeholder="账号"/>
-      <input class="input-text"  type="password" placeholder="密码"/>
-      <button class="login-bt-2">注册</button>
+      <input class="input-text" v-model="loginForm.account"  type="text" placeholder="账号"/>
+      <input class="input-text" v-model="loginForm.password"  type="password" placeholder="密码"/>
+      <button class="login-bt-2" v-on:click="doLogin()">登录</button>
       <div class="no-login" v-on:click="closeLogin()">暂不登陆~</div>
     </div>
-    <div v-show="shouldShowRegister" class="login-box">
-      <input class="input-text"  type="text" placeholder="账号"/>
-      <input class="input-text"  type="password" placeholder="密码"/>
-      <button class="login-bt-2">注册</button>
-      <div class="no-login" v-on:click="closeLogin()">暂不注册~</div>
+    <div v-show="shouldShowRegister" class="register-box">
+      <input class="input-text" v-model="registerForm.nickname"  type="text" placeholder="昵称"/>
+      <input class="input-text" v-model="registerForm.account" type="text" placeholder="账号"/>
+      <input class="input-text" v-model="registerForm.password" type="password" placeholder="密码"/>
+      <button class="login-bt-2" v-on:click="doRegister()">注册</button>
+      <div class="no-register" v-on:click="closeRegister()">暂不注册~</div>
     </div>
+
 	<div class="container" id="c0">
 		<div class="image" id="i0">
 			<div class="city">
@@ -134,7 +137,7 @@
 
 			</div>
 		</div>
-		<div class="story" id="s2">
+		<div class="story" id="s2" v-on:click="go('Technique')">
 			<div class="info">
 			<h3>技术派对</h3>
 			<p>适合我们自己的架构永远是迭代出来的。你可以在这儿提问、分享对当前编码流程的思考、提倡新技术、或者偷偷吐槽善变产品童鞋</p>
@@ -155,17 +158,23 @@
 </template>
 
 <script>
+import { doRegister, doLogin } from '../api'
 export default {
   name: 'Home',
   data () {
     return {
+      hasToken: this.$localStorage.get('token') != null,
       shouldShowLogin: false,
-      shouldShowRegister: false
-    }
-  },
-  computed: {
-    hasToken: function () {
-      return (this.$localStorage.get('token') != null)
+      shouldShowRegister: false,
+      loginForm: {
+        account: null,
+        password: null
+      },
+      registerForm: {
+        account: null,
+        password: null,
+        nickname: null
+      }
     }
   },
   methods: {
@@ -174,6 +183,31 @@ export default {
     },
     showLogin: function () {
       this.shouldShowLogin = true
+    },
+    showRegister: function () {
+      this.shouldShowRegister = true
+    },
+    closeRegister: function () {
+      this.shouldShowRegister = false
+    },
+    doRegister: async function () {
+      await doRegister(this.registerForm)
+      this.shouldShowRegister = false
+    },
+    doLogin: async function () {
+      let response = await doLogin(this.loginForm)
+      this.$localStorage.set('token', response.data.token)
+      this.$localStorage.set('nickname', response.data.nickname)
+      this.shouldShowLogin = false
+      this.hasToken = true
+    },
+    logout: async function () {
+      this.$localStorage.remove('token')
+      this.$localStorage.remove('nickname')
+      this.hasToken = false
+    },
+    go: function (name) {
+      this.$router.push({name: name})
     }
   }
 }
@@ -198,6 +232,23 @@ export default {
   color: #FF99CC
 }
 
+.no-register {
+  position: fixed;
+  right: 0px;
+  top: 200px;
+  border: 1px dotted;
+  border-radius: 100px;
+  color: #7b88d1;
+}
+
+.no-register:hover {
+  color: #FF9999;
+}
+
+.no-register:active {
+  color: #FF99CC
+}
+
 .login-box {
   z-index: 9999;
   background-color: #66CCFF;
@@ -209,6 +260,21 @@ export default {
   height: 170px;
   border-radius: 20px;
   border: 2px solid;
+  border-color: white
+}
+
+.register-box {
+  z-index: 9999;
+  background-color: #66CCFF;
+  position: fixed;
+  top: 0%;
+  left: 0px;
+  width: 100%;
+  padding: 10px;
+  height: 220px;
+  border-radius: 20px;
+  border: 2px solid;
+  border-color: white
 }
 
 .input-text {
@@ -231,7 +297,7 @@ export default {
   width: 73px;
   height: 73px;
   border-radius: 100px;
-  color: #555;
+  color: white;
   outline:none;
   border: 2px solid;
 }
@@ -244,8 +310,24 @@ export default {
     width: 30%;
     height: 7%;
     border-radius: 100px;
-    color: #555;
+    color: white;
     outline:none;
+    border-top: 1px solid;
+    border-left: 1px solid;
+    border-bottom: 0px;
+    border-right: 0px;
+}
+
+.register-bt {
+    width: 30%;
+    height: 7%;
+    border-radius: 100px;
+    color: white;
+    outline:none;
+    border-top: 0px;
+    border-left: 0px;
+    border-bottom: 1px solid;
+    border-right: 1px solid;
 }
 
 .wrapper {
