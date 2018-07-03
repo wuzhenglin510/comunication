@@ -23,7 +23,7 @@
 							<div><i class='fas fa-clock fa-fw'></i> views: {{idea.views}} </div>
 						</div>
 						<div class='comments'>
-							<div><i class='fas fa-comments fa-fw'></i> comments: {{idea.comments}}</div>
+							<div><i class='fas fa-comments fa-fw'></i></div>
 						</div>
             <div class='update' v-if="idea.userId == userId">
 							<div><button class="update-bt" v-on:click="go('PostArticle', {'articleId': idea.id})">修订</button></div>
