@@ -41,11 +41,11 @@
                         <span class='btn' disabled=true>选择目的</span>
                     </label>
                     <label>
-                        <input v-model="article.purpose" name='button-group2' type='radio' value='产品'>
+                        <input v-model="article.purpose" name='button-group2' type='radio' value='分享'>
                         <span class='btn'>分享</span>
                     </label>
                     <label>
-                        <input v-model="article.purpose" name='button-group2' type='radio' value='设计'>
+                        <input v-model="article.purpose" name='button-group2' type='radio' value='吐槽'>
                         <span class='btn last'>吐槽</span>
                     </label>
                 </div>
