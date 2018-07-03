@@ -65,6 +65,7 @@ export default {
           title: '回复成功',
           text: ''
         })
+        location.reload()
       }
     }
   },
