@@ -4,6 +4,7 @@ import HelloWorld from '@/components/HelloWorld'
 import Home from '@/pages/Home'
 import Advice from '@/pages/Advice'
 import CreateArticle from '@/pages/CreateArticle'
+import Article from '@/pages/Article'
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ export default new Router({
       path: '/postArticle',
       name: 'PostArticle',
       component: CreateArticle
+    },
+    {
+      path: '/artile',
+      name: 'Article',
+      component: Article
     }
   ]
 })

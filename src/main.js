@@ -4,7 +4,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import VueLocalStorage from 'vue-localstorage'
+import Notifications from 'vue-notification'
 
+Vue.use(Notifications)
 Vue.use(VueLocalStorage)
 Vue.config.productionTip = false
 

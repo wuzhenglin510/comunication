@@ -4,6 +4,10 @@
     <button class="login-bt" v-if="!hasToken" v-on:click="showRegister()">注册</button>
     <button class="login-bt" v-if="hasToken">{{this.$localStorage.get('nickname')}}</button>
     <button class="login-bt" v-if="hasToken"  v-on:click="logout()">登出</button>
+    <div v-if="!hasAccessCode" style="margin-top: 10px;">
+      <input type="text" v-model="accessCode" placeholder="首次使用请输入授权码" />
+      <button class="login-bt"  v-on:click="installAccessCode()">请求授权</button>
+    </div>
     <div v-show="shouldShowLogin" class="login-box">
       <input class="input-text" v-model="loginForm.account"  type="text" placeholder="账号"/>
       <input class="input-text" v-model="loginForm.password"  type="password" placeholder="密码"/>
@@ -18,9 +22,9 @@
       <div class="no-register" v-on:click="closeRegister()">暂不注册~</div>
     </div>
 
-	<div class="container" id="c0">
-		<div class="image" id="i0">
-			<div class="city">
+	<!-- <div class="container" id="c0"> -->
+		<!-- <div class="image" id="i0"> -->
+			<!-- <div class="city">
 
 			<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 300 225" style="enable-background:new 0 0 300 225;" xml:space="preserve">
 			<ellipse class="st4" id="sh1" cx="170.5" cy ="124.75" rx="37.5" ry="37.5"/>
@@ -48,18 +52,18 @@
 
 			</svg>
 
-			</div>
-		</div>
-		<div class="story" id="s0">
-			<div class="info">
-			<h3>公告</h3>
-			<p>公司的一些规章制度、入职须知、活动通知都在这儿</p>
-			</div>
-		</div>
-	</div>
-	<div class="container" id="c1">
-		<div class="image" id="i1">
-			<div class="city">
+			</div> -->
+		<!-- </div> -->
+		<!-- <div class="story" id="s0"> -->
+			<!-- <div class="info"> -->
+			<!-- <h3>公告</h3> -->
+			<!-- <p>公司的一些规章制度、入职须知、活动通知都在这儿</p> -->
+			<!-- </div> -->
+		<!-- </div> -->
+	<!-- </div> -->
+	<!-- <div class="container" id="c1"> -->
+		<!-- <div class="image" id="i1"> -->
+			<!-- <div class="city">
 			<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 300 225" style="enable-background:new 0 0 300 225;" xml:space="preserve">
 			<ellipse class="st5" id="sh3" cx="150.5" cy ="224.75" rx="77.5" ry="77.5"/>
 			<ellipse class="st5" id="sh2" cx="150.5" cy ="224.75" rx="57.5" ry="57.5"/>
@@ -92,15 +96,15 @@
 
 			</svg>
 
-			</div>
-		</div>
-		<div class="story" id="s1">
-			<div class="info">
-				<h3>意见反馈</h3>
-			<p>在这儿，你可以提出自己对公司制度、工作氛围的意见或建议。可以选择匿名或是实名</p>
-			</div>
-		</div>
-	</div>
+			</div> -->
+		<!-- </div> -->
+		<!-- <div class="story" id="s1"> -->
+			<!-- <div class="info"> -->
+				<!-- <h3>意见反馈</h3> -->
+			<!-- <p>在这儿，你可以提出自己对公司制度、工作氛围的意见或建议。可以选择匿名或是实名</p> -->
+			<!-- </div> -->
+		<!-- </div> -->
+	<!-- </div> -->
 	<div class="container" id="c2">
 		<div class="image" id="i2">
 			<div class="city">
@@ -163,6 +167,8 @@ export default {
   name: 'Home',
   data () {
     return {
+      accessCode: '',
+      hasAccessCode: this.$localStorage.get('accessCode') != null,
       hasToken: this.$localStorage.get('token') != null,
       shouldShowLogin: false,
       shouldShowRegister: false,
@@ -178,6 +184,10 @@ export default {
     }
   },
   methods: {
+    installAccessCode: function () {
+      this.$localStorage.set('accessCode', this.accessCode)
+      this.hasAccessCode = true
+    },
     closeLogin: function () {
       this.shouldShowLogin = false
     },
@@ -191,13 +201,14 @@ export default {
       this.shouldShowRegister = false
     },
     doRegister: async function () {
-      await doRegister(this.registerForm)
+      await doRegister(this.registerForm, this.$localStorage.get('accessCode'))
       this.shouldShowRegister = false
     },
     doLogin: async function () {
-      let response = await doLogin(this.loginForm)
+      let response = await doLogin(this.loginForm, this.$localStorage.get('accessCode'))
       this.$localStorage.set('token', response.data.token)
       this.$localStorage.set('nickname', response.data.nickname)
+      this.$localStorage.set('userId', response.data.userId)
       this.shouldShowLogin = false
       this.hasToken = true
     },

@@ -6,10 +6,10 @@
             <label id='burger' for='menu-toggle'></label>
             <ul id='menu'>
                 <li v-on:click="go('Home')"><a href='#'>首页</a></li>
-                <li v-on:click="go('Technique', {classify:'前端'})"><a>前端</a></li>
-                <li v-on:click="go('Technique', {classify:'后端'})"><a>后端</a></li>
-                <li v-on:click="go('Technique', {classify:'产品'})"><a>产品</a></li>
-                <li v-on:click="go('Technique', {classify:'设计'})"><a>设计</a></li>
+                <li v-on:click="changeClassify('前端')"><a>前端</a></li>
+                <li v-on:click="changeClassify('后端')"><a>后端</a></li>
+                <li v-on:click="changeClassify('产品')"><a>产品</a></li>
+                <li v-on:click="changeClassify('设计')"><a>设计</a></li>
                 <li v-on:click="go('PostArticle')"><a>我要发</a></li>
             </ul>
         </div>
@@ -19,38 +19,27 @@
 
 <script>
 import IdeaPanel from '@/components/IdeaPanel'
+import { doListArticle } from '../api'
 export default {
   name: 'Advice',
   components: { IdeaPanel },
   data () {
     return {
-      ideas: [
-        {
-          purpose: '推荐',
-          title: 'node_power_server',
-          abstract:
-            '为了前端快速实现基于node的前端后置层，写了个基于koa, koa-proxies的组件，欢迎各位来当小白鼠，随便吐槽，虚心接受，坚决不改',
-          createTime: 1530326839679
-        },
-        {
-          purpose: '推荐',
-          title: '使用json schema 定义前端接口',
-          abstract: 'json schema具有完善的限定语法，可以满足多场景的数据格式要求，能今早的展现出前后端逻辑的问题',
-          createTime: 1530326839679
-        },
-        {
-          purpose: '想法',
-          title: '能否给每个项目提供一个开发人员可以使用的docker容器',
-          abstract: '测试环境可以由项目开发者去维护自己项目的docker镜像，不需要什么事情都着运维同学',
-          createTime: 1530326839679
-        }
-      ]
+      ideas: []
     }
   },
   methods: {
     go: function (name, params) {
-      this.$router.push({name: name, params: params})
+      this.$router.push({name: name, query: params})
+    },
+    changeClassify: async function (classify) {
+      let response = await doListArticle(classify, this.$localStorage.get('token'), this.$localStorage.get('accessCode'))
+      this.ideas = response.data
     }
+  },
+  mounted: async function () {
+    let response = await doListArticle(this.$route.query.classify, this.$localStorage.get('token'), this.$localStorage.get('accessCode'))
+    this.ideas = response.data
   }
 }
 </script>
@@ -97,7 +86,7 @@ li, a {
 li {
     width: 230px;
     text-indent: 56px;}
-a:focus {
+a:hover {
     display: block;
     color: #333;
     background-color: #eee;

@@ -53,31 +53,61 @@
             <input type='text' v-model="article.title"  class="input-text" placeholder="做个有内涵的标题党"/>
             <input type='text' v-model="article.abstract"  class="input-text" placeholder="摘要"/>
         </div>
-        <mavon-editor class="mk-container" :ishljs = "true" v-model='article.content' :toolbars='markdownConfig'/>
-        <button class="post-bt" v-on:click="post()">发布</button>
+        <mavon-editor ref=md @imgAdd="$imgAdd" class="mk-container" :ishljs = "true" v-model='article.content' :toolbars='markdownConfig'/>
+        <button v-if="showPostBt" class="post-bt" v-on:click="post()">发布</button>
     </div>
 </template>
 
 <script>
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
-import { doPostArticle } from '../api'
+import { doPostArticle, doGetArticle, doUpload } from '../api'
+
 export default {
   name: 'CreateArticle',
   components: {
     mavonEditor
   },
   methods: {
-    go: function (name) {
-      this.$router.push({name: name})
+    $imgAdd: async function (pos, $file) {
+      var formdata = new FormData()
+      formdata.append('image', $file)
+      let url = await doUpload(formdata, this.$localStorage.get('accessCode'))
+      this.$refs.md.$img2Url(pos, url)
+    },
+    go: function (name, params) {
+      this.$router.push({name, query: params})
     },
     post: async function () {
-      await doPostArticle(this.article, this.$localStorage.get('token'))
+      this.showPostBt = false
+      let response = await doPostArticle(this.article, this.$localStorage.get('token'), this.$localStorage.get('accessCode'))
+      this.$notify({
+        type: 'success',
+        group: 'right',
+        title: '发布成功',
+        text: '2秒后跳转详情页'
+      })
+      setTimeout(() => {
+        this.go('Article', {'articleId': response.data.articleId})
+      }, 2000)
+    }
+  },
+  mounted: async function () {
+    if (this.$route.query.articleId) {
+      let response = await doGetArticle(this.$route.query.articleId, this.$localStorage.get('accessCode'))
+      this.article.id = response.data.id
+      this.article.title = response.data.title
+      this.article.content = response.data.content
+      this.article.classify = response.data.classify
+      this.article.purpose = response.data.purpose
+      this.article.abstract = response.data.abstract
     }
   },
   data () {
     return {
+      showPostBt: true,
       article: {
+        id: undefined,
         content: '',
         title: '',
         classify: '',

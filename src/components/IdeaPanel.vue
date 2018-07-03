@@ -15,15 +15,18 @@
 					</div>
 				</div>
 				<div class='copy'>
-					<h1>{{idea.purpose}}</h1>
-					<h3>{{idea.title}}</h3>
-					<p>{{idea.abstract}}</p>
+					<h1 v-on:click="go('Article', {'articleId': idea.id})">{{idea.purpose}}</h1>
+					<h3 v-on:click="go('Article', {'articleId': idea.id})">{{idea.title}}</h3>
+					<p v-on:click="go('Article', {'articleId': idea.id})"> {{idea.abstract}}</p>
 					<div class='footer'>
-						<div class='time'>
-							<div><i class='fas fa-clock fa-fw'></i> 6 mins ago</div>
+						<div class='views'>
+							<div><i class='fas fa-clock fa-fw'></i> views: {{idea.views}} </div>
 						</div>
 						<div class='comments'>
-							<div><i class='fas fa-comments fa-fw'></i> 39 comments</div>
+							<div><i class='fas fa-comments fa-fw'></i> comments: {{idea.comments}}</div>
+						</div>
+            <div class='update' v-if="idea.userId == userId">
+							<div><button class="update-bt" v-on:click="go('PostArticle', {'articleId': idea.id})">修订</button></div>
 						</div>
 					</div>
 				</div>
@@ -52,10 +55,14 @@ export default {
     getMonth: function (timestamp) {
       let date = new Date(timestamp)
       return date.toDateString().split(' ')[1]
+    },
+    go: function (name, params) {
+      this.$router.push({name, query: params})
     }
   },
   data () {
     return {
+      userId: this.$localStorage.get('userId'),
       swiperOption: {
         effect: 'coverflow',
         grabCursor: true,
@@ -114,7 +121,7 @@ p {
 .swiper-content {
   background-color: #fff;
   width: 100%;
-  height: 100%;
+  height: 500px;
 }
 .hero {
   width: 100%;
@@ -152,10 +159,11 @@ p {
   margin-bottom: 35px;
   color: graytext;
 }
-.time {
+.views {
   display: inline-block;
 }
 .comments {
+  right: 50px;
   display: inline-block;
   margin-left: 20px;
   cursor: pointer;
@@ -167,6 +175,20 @@ p {
   margin-left: 20px;
   cursor: pointer;
   transition: 0.2s all;
+}
+.update {
+  display: inline-block;
+  margin-left: 20px;
+  cursor: pointer;
+  transition: 0.2s all;
+}
+
+.update-bt {
+    margin-left: 70px;
+    width: 80px;
+    border-radius: 100px;
+    color: white;
+    background-color: black;
 }
 
 .new-york {
